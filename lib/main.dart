@@ -28,8 +28,9 @@ class SplashState extends State<Splash> {
       //DateTime date = jsonDecode(dateEncoded);
       int timeMillis = prefs.getInt('DATE');
       DateTime date = DateTime.fromMillisecondsSinceEpoch(timeMillis);
+      int pickedDay = prefs.getInt('DAYS');
       Navigator.of(context).pushReplacement(
-          new MaterialPageRoute(builder: (context) => new Home(date)));
+          new MaterialPageRoute(builder: (context) => new Home(date,pickedDay)));
     } else {
       /*DateTime dateDecoded = DateTime.now();
        String dateEncoded = jsonEncode(dateDecoded);
@@ -62,9 +63,15 @@ class SplashState extends State<Splash> {
 class Home extends StatelessWidget {
 
   DateTime selectedDate;
-  Home(selectedDate)
+  int pickedDays;
+  Home(selectedDate,pickedDays)
   {
     this.selectedDate = selectedDate;
+    this.pickedDays = pickedDays;
+    if((this.selectedDate.difference(DateTime.now()).inDays/pickedDays).abs() <0 || (this.selectedDate.difference(DateTime.now()).inDays/pickedDays).abs() >=1)
+      {
+        this.pickedDays = 1000;
+      }
   }
 
 
@@ -108,7 +115,7 @@ class Home extends StatelessWidget {
                 radius: 250.0,
                 lineWidth: 13.0,
                 animation: true,
-                percent: .7, //(selectedDate.difference(DateTime.now()).inDays/30).abs(),
+                percent: (selectedDate.difference(DateTime.now()).inDays/pickedDays).abs(),
                 center:
                 new Text(
                   '${selectedDate.difference(DateTime.now()).inDays.abs()}',
@@ -180,10 +187,11 @@ class IntroScreen extends StatelessWidget {
       int a = prefs.getInt('DATE');
       DateTime date = DateTime.fromMillisecondsSinceEpoch(a);
       print(date);
+      prefs.setInt('DAYS',30);
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder:(context) => new Home(picked)
+              builder:(context) => new Home(picked,30)
           )
       );
     }
@@ -230,10 +238,11 @@ class config extends StatelessWidget {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int dateMillis = picked.millisecondsSinceEpoch;
       prefs.setInt('DATE',dateMillis);
+      int pickedDays = prefs.getInt('DAYS');
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder:(context) => Home(picked)
+              builder:(context) => Home(picked,pickedDays)
           )
       );
     }
@@ -247,7 +256,14 @@ class config extends StatelessWidget {
               Center(
                 child: RaisedButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    SharedPreferences.getInstance().then((prefs){
+                      int pickedDays = prefs.getInt('DAYS');
+                      int dateMillis = prefs.getInt('DATE');
+                      DateTime date = DateTime.fromMillisecondsSinceEpoch(dateMillis);
+                      Navigator.push(context,MaterialPageRoute(
+                          builder:(context) => Home(date,pickedDays)));
+                    });
+
                   },
                   child: Text('Go back!'),
                 ),
