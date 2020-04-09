@@ -16,3 +16,11 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+class Splash extends StatefulWidget {
+  @override
+  SplashState createState() => new SplashState();
+}
+class SplashState extends State<Splash> {
+  Future checkFirstSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _seen = (prefs.getBool('seen') ?? false);
