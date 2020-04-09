@@ -24,3 +24,19 @@ class SplashState extends State<Splash> {
   Future checkFirstSeen() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool _seen = (prefs.getBool('seen') ?? false);
+    if (_seen) {
+      // var dateEncoded = prefs.getString('pickedDate');
+      //DateTime date = jsonDecode(dateEncoded);
+      int timeMillis = prefs.getInt('DATE');
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(timeMillis);
+      Navigator.of(context).pushReplacement(
+          new MaterialPageRoute(builder: (context) => new Home(date)));
+    } else {
+      /*DateTime dateDecoded = DateTime.now();
+       String dateEncoded = jsonEncode(dateDecoded);
+       prefs.setString('pickedDate', )*/
+      await prefs.setBool('seen', true);
+      Navigator.of(context).pushReplacement(
+          new MaterialPageRoute(builder: (context) => new IntroScreen()));
+    }
+  }
