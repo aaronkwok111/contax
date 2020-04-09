@@ -163,3 +163,54 @@ class Home extends StatelessWidget {
     );
   }
 }
+class IntroScreen extends StatelessWidget {
+  DateTime selectedDate = DateTime.now();
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      /*var jsonEncoded  = jsonEncode(picked);
+      prefs.setString('DATE',jsonEncoded);
+      String d = prefs.getString('DATE');*/
+      int timeMil = picked.millisecondsSinceEpoch;
+      prefs.setInt('DATE',timeMil);
+      int a = prefs.getInt('DATE');
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(a);
+      print(date);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder:(context) => new Home(picked)
+          )
+      );
+    }
+
+  }
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new Center(
+        child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            new Text('This is the intro page'),
+
+            Container(
+                width: 200.0,
+                height: 200.0,
+                child: FloatingActionButton(
+                    child: Text("When did you last change your contacts",
+                        style: TextStyle(fontSize: 10.0)),
+                    onPressed: () => _selectDate(context)
+                )
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
