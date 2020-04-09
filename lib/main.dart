@@ -214,3 +214,85 @@ class IntroScreen extends StatelessWidget {
     );
   }
 }
+class config extends StatelessWidget {
+  int days = 1;
+  DateTime selectedDate = DateTime.now();
+  String date;
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      /*SharedPreferences prefs = await SharedPreferences.getInstance();
+      var jsonEncoded  = jsonEncode(picked);
+      prefs.setString('pickeddate',jsonEncoded);*/
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int dateMillis = picked.millisecondsSinceEpoch;
+      prefs.setInt('DATE',dateMillis);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder:(context) => Home(picked)
+          )
+      );
+    }
+
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Column(
+            children: <Widget>[
+              Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Go back!'),
+                ),
+              ),
+              Container(
+                  child: RaisedButton(
+                    onPressed: () => _selectDate(context),
+                    child: Text('select date'),
+                  )
+              ),
+              Row(
+                children: <Widget>[
+                  Container(
+                      width:100.0,
+                      height: 100.0,
+                      child: FloatingActionButton(
+                        heroTag: "a",
+                        child:Text('Biweekly'),
+                        onPressed: (){
+                          SharedPreferences.getInstance().then((prefs){
+                            prefs.setInt("DAYS", 14);
+                          });
+                        },
+                      )
+                  ),
+                  Container(
+                      width:100.0,
+                      height: 100.0,
+                      child: FloatingActionButton(
+                        heroTag: "b",
+                        child:Text('Monthly'),
+                        onPressed: (){
+                          SharedPreferences.getInstance().then((prefs){
+                            prefs.setInt('DAYS', 30);
+                          });
+
+                        },
+                      )
+                  )
+                ],
+              )
+
+            ]
+        )
+    );
+  }
+}
