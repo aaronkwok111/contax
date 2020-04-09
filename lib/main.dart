@@ -40,3 +40,23 @@ class SplashState extends State<Splash> {
           new MaterialPageRoute(builder: (context) => new IntroScreen()));
     }
   }
+  void setDays(int days) async{
+    SharedPreferences prefs =await SharedPreferences.getInstance();
+    prefs.setInt('days',days);
+  }
+  @override
+  void initState() {
+    super.initState();
+    new Timer(new Duration(milliseconds: 200), () {
+      checkFirstSeen();
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new Center(
+        child: new Text('Loading...'),
+      ),
+    );
+  }
+}
