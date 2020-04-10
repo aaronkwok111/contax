@@ -29,8 +29,10 @@ class SplashState extends State<Splash> {
       int timeMillis = prefs.getInt('DATE');
       DateTime date = DateTime.fromMillisecondsSinceEpoch(timeMillis);
       int pickedDay = prefs.getInt('DAYS');
+      int caseMillis = prefs.getInt('DATE_CASE');
+      DateTime caseDate = DateTime.fromMillisecondsSinceEpoch(caseMillis);
       Navigator.of(context).pushReplacement(
-          new MaterialPageRoute(builder: (context) => new Home(date,pickedDay)));
+          new MaterialPageRoute(builder: (context) => new Home(date,pickedDay,caseDate)));
     } else {
       /*DateTime dateDecoded = DateTime.now();
        String dateEncoded = jsonEncode(dateDecoded);
@@ -141,7 +143,7 @@ class Home extends StatelessWidget {
                         new TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 75.0),
                       ),
                       new Text(
-                        'DAYS LEFT BITCH ASS',
+                        'DAYS LEFT - CONTACTS',
                         style:
                         new TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 15.0),
                       )
@@ -158,11 +160,21 @@ class Home extends StatelessWidget {
                   radius: 150.0,
                   lineWidth: 13.0,
                   animation: true,
-                  percent: 0.7,
-                  center: new Text(
-                    "70.0%",
-                    style:
-                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                  percent: (daysCase.difference(DateTime.now()).inDays/90).abs(),
+                  center:  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Text(
+                        '${daysCase.difference(DateTime.now()).inDays.abs()}',
+                        style:
+                        new TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20.0),
+                      ),
+                      new Text(
+                        'DAYS LEFT - CASE',
+                        style:
+                        new TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 10.0),
+                      )
+                    ],
                   ),
                   circularStrokeCap: CircularStrokeCap.round,
                   progressColor: Colors.indigoAccent,
@@ -282,7 +294,7 @@ class IntroScreen extends StatelessWidget {
                 width: 200.0,
                 height: 200.0,
                 child: FloatingActionButton(
-                    heroTag: "c",
+                    heroTag: "e",
                     backgroundColor: Colors.indigoAccent,
                     child: Text("When did you last change your case",
                         textAlign: TextAlign.center,
@@ -298,7 +310,7 @@ class IntroScreen extends StatelessWidget {
                   backgroundColor: Colors.indigoAccent,
                     child: Text("NEXT",
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 8.0)),
+                        style: TextStyle(fontSize: 15.0)),
                     onPressed: () {
                       SharedPreferences.getInstance().then((prefs){
                         int dateMillis = prefs.getInt('DATE');
@@ -337,25 +349,33 @@ class config extends StatelessWidget {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int dateMillis = picked.millisecondsSinceEpoch;
       prefs.setInt('DATE',dateMillis);
-      int pickedDays = prefs.getInt('DAYS');
-      int caseMillis = prefs.getInt('DATE_CASE');
-      DateTime caseDate = DateTime.fromMillisecondsSinceEpoch(caseMillis);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder:(context) => Home(picked,pickedDays,caseDate)
-          )
-      );
     }
-
+  }
+  Future<Null> _selectDateCase(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int timeMil = picked.millisecondsSinceEpoch;
+      prefs.setInt('DATE_CASE',timeMil);
+      print("case");
+    }
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo[800],
         body: Column(
             children: <Widget>[
-              Center(
-                child: RaisedButton(
+              Container(
+                width: 100.0,
+                height: 100.0,
+                padding: EdgeInsets.all(20.0),
+                child: FloatingActionButton(
+                  heroTag: "f",
                   onPressed: () {
                     SharedPreferences.getInstance().then((prefs){
                       int pickedDays = prefs.getInt('DAYS');
@@ -368,45 +388,72 @@ class config extends StatelessWidget {
                     });
 
                   },
-                  child: Text('Go back!'),
+                  child: Text('Go back!',
+                  style: TextStyle(fontSize:8.0)),
                 ),
               ),
               Container(
-                  child: RaisedButton(
-                    onPressed: () => _selectDate(context),
-                    child: Text('select date'),
+                  width: 200.0,
+                  height: 200.0,
+                  child: FloatingActionButton(
+                      heroTag: "g",
+                      backgroundColor: Colors.indigoAccent,
+                      child: Text("When did you last change your contacts",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 8.0)),
+                      onPressed: () => _selectDate(context)
                   )
               ),
-              Row(
-                children: <Widget>[
-                  Container(
-                      width:100.0,
-                      height: 100.0,
-                      child: FloatingActionButton(
-                        heroTag: "a",
-                        child:Text('Biweekly'),
-                        onPressed: (){
-                          SharedPreferences.getInstance().then((prefs){
-                            prefs.setInt("DAYS", 14);
-                          });
-                        },
-                      )
-                  ),
-                  Container(
-                      width:100.0,
-                      height: 100.0,
-                      child: FloatingActionButton(
-                        heroTag: "b",
-                        child:Text('Monthly'),
-                        onPressed: (){
-                          SharedPreferences.getInstance().then((prefs){
-                            prefs.setInt('DAYS', 30);
-                          });
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                          padding:EdgeInsets.all(10),
+                          width:100.0,
+                          height: 100.0,
+                          child: FloatingActionButton(
+                            heroTag: "a",
+                            child:Text('Biweekly'),
+                            backgroundColor: Colors.indigoAccent,
+                            onPressed: (){
+                              SharedPreferences.getInstance().then((prefs){
+                                prefs.setInt("DAYS", 14);
+                              });
+                            },
+                          )
+                      ),
+                      Container(
+                          padding:EdgeInsets.all(10),
+                          width:100.0,
+                          height: 100.0,
+                          child: FloatingActionButton(
+                            heroTag: "b",
+                            backgroundColor: Colors.indigoAccent,
+                            child:Text('Monthly'),
+                            onPressed: (){
+                              SharedPreferences.getInstance().then((prefs){
+                                prefs.setInt('DAYS', 30);
+                              });
 
-                        },
+                            },
+                          )
                       )
+                    ],
                   )
-                ],
+              ),
+              Container(
+                  width: 200.0,
+                  height: 200.0,
+                  child: FloatingActionButton(
+                      heroTag: "e",
+                      backgroundColor: Colors.indigoAccent,
+                      child: Text("When did you last change your case",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 8.0)),
+                      onPressed: () => _selectDateCase(context)
+                  )
               )
 
             ]
