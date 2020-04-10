@@ -64,14 +64,20 @@ class Home extends StatelessWidget {
 
   DateTime selectedDate;
   int pickedDays;
-  Home(selectedDate,pickedDays)
+  DateTime daysCase;
+  Home(selectedDate,pickedDays,daysCase)
   {
     this.selectedDate = selectedDate;
     this.pickedDays = pickedDays;
+    this.daysCase = daysCase;
     if((this.selectedDate.difference(DateTime.now()).inDays/pickedDays).abs() <0 || (this.selectedDate.difference(DateTime.now()).inDays/pickedDays).abs() >=1)
       {
         this.pickedDays = 1000;
       }
+    if((this.daysCase.difference(DateTime.now()).inDays/pickedDays).abs() <0 || (this.daysCase.difference(DateTime.now()).inDays/pickedDays).abs() >=1)
+    {
+      this.pickedDays = 1000;
+    }
   }
 
 
@@ -195,28 +201,29 @@ class IntroScreen extends StatelessWidget {
         lastDate: DateTime(2101));
     if (picked != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      /*var jsonEncoded  = jsonEncode(picked);
-      prefs.setString('DATE',jsonEncoded);
-      String d = prefs.getString('DATE');*/
       int timeMil = picked.millisecondsSinceEpoch;
       prefs.setInt('DATE',timeMil);
-      int a = prefs.getInt('DATE');
-      DateTime date = DateTime.fromMillisecondsSinceEpoch(a);
-      print(date);
-      prefs.setInt('DAYS',30);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder:(context) => new Home(picked,30)
-          )
-      );
+      print("success");
     }
-
+  }
+  Future<Null> _selectDateCase(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int timeMil = picked.millisecondsSinceEpoch;
+      prefs.setInt('DATE_CASE',timeMil);
+      print("case");
+    }
   }
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: new Center(
+      backgroundColor: Colors.indigo[800],
+      body: SingleChildScrollView(
         child: new Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -224,6 +231,8 @@ class IntroScreen extends StatelessWidget {
                 width: 200.0,
                 height: 200.0,
                 child: FloatingActionButton(
+                  heroTag: "c",
+                    backgroundColor: Colors.indigoAccent,
                     child: Text("When did you last change your contacts",
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 8.0)),
@@ -242,6 +251,7 @@ class IntroScreen extends StatelessWidget {
                         child: FloatingActionButton(
                           heroTag: "a",
                           child:Text('Biweekly'),
+                          backgroundColor: Colors.indigoAccent,
                           onPressed: (){
                             SharedPreferences.getInstance().then((prefs){
                               prefs.setInt("DAYS", 14);
@@ -255,6 +265,7 @@ class IntroScreen extends StatelessWidget {
                         height: 100.0,
                         child: FloatingActionButton(
                           heroTag: "b",
+                          backgroundColor: Colors.indigoAccent,
                           child:Text('Monthly'),
                           onPressed: (){
                             SharedPreferences.getInstance().then((prefs){
@@ -266,6 +277,45 @@ class IntroScreen extends StatelessWidget {
                     )
                   ],
                 )
+            ),
+            Container(
+                width: 200.0,
+                height: 200.0,
+                child: FloatingActionButton(
+                    heroTag: "c",
+                    backgroundColor: Colors.indigoAccent,
+                    child: Text("When did you last change your case",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 8.0)),
+                    onPressed: () => _selectDateCase(context)
+                )
+            ),
+            Container(
+                width: 200.0,
+                height: 200.0,
+                child: FloatingActionButton(
+                  heroTag: "d",
+                  backgroundColor: Colors.indigoAccent,
+                    child: Text("NEXT",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 8.0)),
+                    onPressed: () {
+                      SharedPreferences.getInstance().then((prefs){
+                        int dateMillis = prefs.getInt('DATE');
+                        DateTime date = DateTime.fromMillisecondsSinceEpoch(dateMillis);
+                        int days = prefs.getInt('DAYS');
+                        int caseMillis = prefs.getInt('DATE_CASE');
+                        DateTime caseDate = DateTime.fromMillisecondsSinceEpoch(caseMillis);
+                        print(date);
+                        print(days);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Home(date,days,caseDate))
+                        );
+
+                      });
+                    }
+            ),
             )
           ],
         ),
@@ -284,17 +334,16 @@ class config extends StatelessWidget {
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null) {
-      /*SharedPreferences prefs = await SharedPreferences.getInstance();
-      var jsonEncoded  = jsonEncode(picked);
-      prefs.setString('pickeddate',jsonEncoded);*/
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int dateMillis = picked.millisecondsSinceEpoch;
       prefs.setInt('DATE',dateMillis);
       int pickedDays = prefs.getInt('DAYS');
+      int caseMillis = prefs.getInt('DATE_CASE');
+      DateTime caseDate = DateTime.fromMillisecondsSinceEpoch(caseMillis);
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder:(context) => Home(picked,pickedDays)
+              builder:(context) => Home(picked,pickedDays,caseDate)
           )
       );
     }
@@ -312,8 +361,10 @@ class config extends StatelessWidget {
                       int pickedDays = prefs.getInt('DAYS');
                       int dateMillis = prefs.getInt('DATE');
                       DateTime date = DateTime.fromMillisecondsSinceEpoch(dateMillis);
+                      int caseMillis = prefs.getInt('DATE_CASE');
+                      DateTime caseDate = DateTime.fromMillisecondsSinceEpoch(caseMillis);
                       Navigator.push(context,MaterialPageRoute(
-                          builder:(context) => Home(date,pickedDays)));
+                          builder:(context) => Home(date,pickedDays,caseDate)));
                     });
 
                   },
