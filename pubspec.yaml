@@ -17,6 +17,8 @@
     percent_indicator: "^2.1.1"
     custom_radio: ^0.1.2
     url_launcher: ^5.4.1
+    flutter_local_notifications: ^1.4.0
+    path_provider: ^0.5.0+1
     flutter:
       sdk: flutter
     # The following adds the Cupertino Icons font to your application.

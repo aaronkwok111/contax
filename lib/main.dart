@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void main() => runApp(new MyApp());
 
@@ -34,9 +35,6 @@ class SplashState extends State<Splash> {
       Navigator.of(context).pushReplacement(
           new MaterialPageRoute(builder: (context) => new Home(date,pickedDay,caseDate)));
     } else {
-      /*DateTime dateDecoded = DateTime.now();
-       String dateEncoded = jsonEncode(dateDecoded);
-       prefs.setString('pickedDate', )*/
       await prefs.setBool('seen', true);
       Navigator.of(context).pushReplacement(
           new MaterialPageRoute(builder: (context) => new IntroScreen()));
@@ -46,6 +44,8 @@ class SplashState extends State<Splash> {
     SharedPreferences prefs =await SharedPreferences.getInstance();
     prefs.setInt('days',days);
   }
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
   @override
   void initState() {
     super.initState();
@@ -77,9 +77,17 @@ class Home extends StatelessWidget {
         this.pickedDays = 1000;
       }
   }
+  Future singleNotification(DateTime datetime, String message, String subtext, int hashcode){
+    var androidChannel = AndroidNotificationDetails(
+      'channel-id', 'channel-name', 'channel-description',
+      importance: Importance.Max,
+      priority: Priority.Max,
 
+    );
+    var iosChannel = IOSNotificationDetails();
+    var platformChannel = NotificationDetails(androidChannel,iosChannel);
 
-
+  }
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -227,6 +235,7 @@ class IntroScreen extends StatelessWidget {
       print("case");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -301,6 +310,7 @@ class IntroScreen extends StatelessWidget {
             Container(
                 width: 200.0,
                 height: 200.0,
+                padding: EdgeInsets.all(30),
                 child: FloatingActionButton(
                   heroTag: "d",
                   backgroundColor: Colors.indigoAccent,
