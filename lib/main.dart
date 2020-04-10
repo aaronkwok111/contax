@@ -76,10 +76,6 @@ class Home extends StatelessWidget {
       {
         this.pickedDays = 1000;
       }
-    if((this.daysCase.difference(DateTime.now()).inDays/pickedDays).abs() <0 || (this.daysCase.difference(DateTime.now()).inDays/pickedDays).abs() >=1)
-    {
-      this.pickedDays = 1000;
-    }
   }
 
 
@@ -376,6 +372,7 @@ class config extends StatelessWidget {
                 padding: EdgeInsets.all(20.0),
                 child: FloatingActionButton(
                   heroTag: "f",
+                  backgroundColor: Colors.indigo[100],
                   onPressed: () {
                     SharedPreferences.getInstance().then((prefs){
                       int pickedDays = prefs.getInt('DAYS');
@@ -389,12 +386,13 @@ class config extends StatelessWidget {
 
                   },
                   child: Text('Go back!',
-                  style: TextStyle(fontSize:8.0)),
+                  style: TextStyle(color: Colors.indigo[800],fontSize:8.0)),
                 ),
               ),
               Container(
                   width: 200.0,
                   height: 200.0,
+                  padding: EdgeInsets.all(20),
                   child: FloatingActionButton(
                       heroTag: "g",
                       backgroundColor: Colors.indigoAccent,
@@ -446,8 +444,9 @@ class config extends StatelessWidget {
               Container(
                   width: 200.0,
                   height: 200.0,
+                  padding: EdgeInsets.all(20),
                   child: FloatingActionButton(
-                      heroTag: "e",
+                      heroTag: "h",
                       backgroundColor: Colors.indigoAccent,
                       child: Text("When did you last change your case",
                           textAlign: TextAlign.center,
