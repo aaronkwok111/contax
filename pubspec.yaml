@@ -35,6 +35,13 @@
     uses-material-design: true
     # To add assets to your application, add an assets section, like this:
 
+    fonts:
+        - family: Roboto
+          fonts:
+              - asset: assets/Roboto-Regular.ttf
+              - asset: assets/Roboto-Bold.ttf
+                weight: 700
+
   flutter_icons:
     android: "launcher_icon"
     ios: true

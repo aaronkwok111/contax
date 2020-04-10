@@ -79,92 +79,108 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: Column(
-          children:<Widget>[
-            Container(
-                padding:EdgeInsets.fromLTRB(0,20,0,0),
-                child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text("Hello!",
-                        style: TextStyle(fontSize:40))
-                )
-            ),
-            Container(
-                child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text("Nice to see you",
-                        style: TextStyle(fontSize:25))
-                )
-            ),
-            Container(
-              width:125,
-              height:125.0,
-              child: FloatingActionButton(
-                child: Text('Track My Contacts',
-                    style: TextStyle(fontSize: 10.0)),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => config()),
-                  );
-                },
-              ),
-            ),
-            Container(
-              child:CircularPercentIndicator(
-                radius: 250.0,
-                lineWidth: 13.0,
-                animation: true,
-                percent: (selectedDate.difference(DateTime.now()).inDays/pickedDays).abs(),
-                center:
-                new Text(
-                  '${selectedDate.difference(DateTime.now()).inDays.abs()}',
-                  style:
-                  new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-                ),
-                circularStrokeCap: CircularStrokeCap.round,
-                progressColor: Colors.blue,
-              ),
-            ),
-            Text(
-                'hello'
-            ),
-
-            Row(
-                children: <Widget>[
-                  Container(
-                    child:CircularPercentIndicator(
-                      radius: 150.0,
-                      lineWidth: 13.0,
-                      animation: true,
-                      percent: 0.7,
-                      center: new Text(
-                        "70.0%",
-                        style:
-                        new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-                      ),
-                      circularStrokeCap: CircularStrokeCap.round,
-                      progressColor: Colors.blue,
-                    ),
-                  ),
-                  Container(
-                    child:CircularPercentIndicator(
-                      radius: 150.0,
-                      lineWidth: 13.0,
-                      animation: true,
-                      percent: 0.7,
-                      center: new Text(
-                        "70.0%",
-                        style:
-                        new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-                      ),
-                      circularStrokeCap: CircularStrokeCap.round,
-                      progressColor: Colors.blue,
-                    ),
+      backgroundColor: Colors.indigo[800],
+      body: SingleChildScrollView(
+        child: Column(
+            children:<Widget>[
+              Container(
+                  padding:EdgeInsets.fromLTRB(25,50,0,0),
+                  child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text("HELLO",
+                          style: TextStyle(color: Colors.white,fontSize:28, fontFamily: 'Roboto', fontWeight: FontWeight.bold, letterSpacing: 3))
                   )
-                ]
-            )
-          ]
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(25,0,0,0),
+                  child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text("Nice to see you",
+                          style: TextStyle(color: Colors.indigo[100], fontSize:21, fontFamily:'Roboto'))
+                  )
+              ),
+
+              Align(
+                child:Container(
+                  padding: EdgeInsets.fromLTRB(0,20,0,30),
+                  width:150,
+                  height:150.0,
+                  child: FloatingActionButton(
+                    child: Text('Track My Contacts',
+                        style: TextStyle(fontSize: 7.0)),
+                    backgroundColor: Colors.indigoAccent,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => config()),
+                      );
+                    },
+                  ),
+                )
+              ),
+              Container(
+                child:CircularPercentIndicator(
+                  radius: 275.0,
+                  lineWidth: 18.0,
+                  animation: true,
+                  percent: (selectedDate.difference(DateTime.now()).inDays/pickedDays).abs(),
+                  center:
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Text(
+                        '${selectedDate.difference(DateTime.now()).inDays.abs()}',
+                        style:
+                        new TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 75.0),
+                      ),
+                      new Text(
+                        'DAYS LEFT BITCH ASS',
+                        style:
+                        new TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 15.0),
+                      )
+                    ],
+                  ),
+                  circularStrokeCap: CircularStrokeCap.round,
+                  progressColor: Colors.indigoAccent,
+                  backgroundColor: Colors.indigo[100],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(30),
+                child:CircularPercentIndicator(
+                  radius: 150.0,
+                  lineWidth: 13.0,
+                  animation: true,
+                  percent: 0.7,
+                  center: new Text(
+                    "70.0%",
+                    style:
+                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                  ),
+                  circularStrokeCap: CircularStrokeCap.round,
+                  progressColor: Colors.indigoAccent,
+                  backgroundColor: Colors.indigo[100],
+                ),
+              ),
+              Container(
+                child:CircularPercentIndicator(
+                  radius: 150.0,
+                  lineWidth: 13.0,
+                  animation: true,
+                  percent: 0.7,
+                  center: new Text(
+                    "70.0%",
+                    style:
+                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                  ),
+                  circularStrokeCap: CircularStrokeCap.round,
+                  progressColor: Colors.indigoAccent,
+                  backgroundColor: Colors.indigo[100],
+                ),
+              )
+            ]
+        )
       ),
     );
   }
@@ -204,17 +220,53 @@ class IntroScreen extends StatelessWidget {
         child: new Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            new Text('This is the intro page'),
-
             Container(
                 width: 200.0,
                 height: 200.0,
                 child: FloatingActionButton(
                     child: Text("When did you last change your contacts",
-                        style: TextStyle(fontSize: 10.0)),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 8.0)),
                     onPressed: () => _selectDate(context)
                 )
             ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                        padding:EdgeInsets.all(10),
+                        width:100.0,
+                        height: 100.0,
+                        child: FloatingActionButton(
+                          heroTag: "a",
+                          child:Text('Biweekly'),
+                          onPressed: (){
+                            SharedPreferences.getInstance().then((prefs){
+                              prefs.setInt("DAYS", 14);
+                            });
+                          },
+                        )
+                    ),
+                    Container(
+                        padding:EdgeInsets.all(10),
+                        width:100.0,
+                        height: 100.0,
+                        child: FloatingActionButton(
+                          heroTag: "b",
+                          child:Text('Monthly'),
+                          onPressed: (){
+                            SharedPreferences.getInstance().then((prefs){
+                              prefs.setInt('DAYS', 30);
+                            });
+
+                          },
+                        )
+                    )
+                  ],
+                )
+            )
           ],
         ),
       ),
