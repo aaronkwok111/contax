@@ -5,7 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-void main() => runApp(new MyApp());
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+
+class ReceivedNotification {
+  final int id;
+  final String title;
+  final String body;
+  final String payload;
+
+  ReceivedNotification({
+    @required this.id,
+    @required this.title,
+    @required this.body,
+    @required this.payload,
+  });
+}
+
+Future <void> main() async
+{
+  runApp(new MyApp());
+}
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -40,12 +61,6 @@ class SplashState extends State<Splash> {
           new MaterialPageRoute(builder: (context) => new IntroScreen()));
     }
   }
-  void setDays(int days) async{
-    SharedPreferences prefs =await SharedPreferences.getInstance();
-    prefs.setInt('days',days);
-  }
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
   @override
   void initState() {
     super.initState();
@@ -67,8 +82,23 @@ class Home extends StatelessWidget {
   DateTime selectedDate;
   int pickedDays;
   DateTime daysCase;
+  void initializing() async {
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+    AndroidInitializationSettings androidInitializationSettings;
+    IOSInitializationSettings iosInitializationSettings;
+    InitializationSettings initializationSettings;
+    androidInitializationSettings = AndroidInitializationSettings('icon');
+    iosInitializationSettings = IOSInitializationSettings(
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    initializationSettings = InitializationSettings(
+        androidInitializationSettings, iosInitializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
+  }
   Home(selectedDate,pickedDays,daysCase)
   {
+    initializing();
     this.selectedDate = selectedDate;
     this.pickedDays = pickedDays;
     this.daysCase = daysCase;
@@ -77,16 +107,45 @@ class Home extends StatelessWidget {
         this.pickedDays = 1000;
       }
   }
-  Future singleNotification(DateTime datetime, String message, String subtext, int hashcode){
-    var androidChannel = AndroidNotificationDetails(
-      'channel-id', 'channel-name', 'channel-description',
-      importance: Importance.Max,
-      priority: Priority.Max,
+  void _showNotifications() async {
+    await notification();
+  }
 
+  Future<void> notification() async {
+    AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+        'Channel ID', 'Channel title', 'channel body',
+        priority: Priority.High,
+        importance: Importance.Max,
+        ticker: 'test');
+    IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
+
+    NotificationDetails notificationDetails =
+    NotificationDetails(androidNotificationDetails, iosNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'I really', 'want to fucking die', notificationDetails);
+  }
+  Future onSelectNotification(String payLoad) {
+    if (payLoad != null) {
+      print(payLoad);
+    }
+
+    // we can set navigator to navigate another screen
+  }
+  Future onDidReceiveLocalNotification(
+      int id, String title, String body, String payload) async {
+    return CupertinoAlertDialog(
+      title: Text(title),
+      content: Text(body),
+      actions: <Widget>[
+        CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () {
+              print("");
+            },
+            child: Text("Okay")),
+      ],
     );
-    var iosChannel = IOSNotificationDetails();
-    var platformChannel = NotificationDetails(androidChannel,iosChannel);
-
   }
   @override
   Widget build(BuildContext context) {
@@ -122,6 +181,7 @@ class Home extends StatelessWidget {
                         style: TextStyle(fontSize: 7.0)),
                     backgroundColor: Colors.indigoAccent,
                     onPressed: () {
+                      _showNotifications();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => config()),
