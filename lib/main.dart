@@ -106,9 +106,21 @@ class Home extends StatelessWidget {
       {
         this.pickedDays = 1000;
       }
+    if((this.selectedDate.difference(DateTime.now()).inDays/pickedDays).abs() ==0)
+    {
+      _showNotifications();
+    }
+    if((this.daysCase.difference(DateTime.now()).inDays/pickedDays).abs() ==0)
+    {
+      _showNotificationsCase();
+    }
+
   }
   void _showNotifications() async {
     await notification();
+  }
+  void _showNotificationsCase() async {
+    await notificationCase();
   }
 
   Future<void> notification() async {
@@ -123,7 +135,21 @@ class Home extends StatelessWidget {
     NotificationDetails notificationDetails =
     NotificationDetails(androidNotificationDetails, iosNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        0, 'I really', 'want to fucking die', notificationDetails);
+        0, 'CONTACTS', 'It is time to change your contacts', notificationDetails);
+  }
+  Future<void> notificationCase() async {
+    AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+        'Channel ID', 'Channel title', 'channel body',
+        priority: Priority.High,
+        importance: Importance.Max,
+        ticker: 'test');
+    IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
+
+    NotificationDetails notificationDetails =
+    NotificationDetails(androidNotificationDetails, iosNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'CASE', 'It is time to change your case', notificationDetails);
   }
   Future onSelectNotification(String payLoad) {
     if (payLoad != null) {
@@ -181,7 +207,6 @@ class Home extends StatelessWidget {
                         style: TextStyle(fontSize: 7.0)),
                     backgroundColor: Colors.indigoAccent,
                     onPressed: () {
-                      _showNotifications();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => config()),
